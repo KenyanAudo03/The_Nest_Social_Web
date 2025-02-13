@@ -1,0 +1,55 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.env
+*.venv
+Pipfile
+Pipfile.lock
+
+# Django-specific files
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Logs
+logs/
+*.log
+debug.log
+
+# Secrets and environment variables
+.env
+*.pem
+config/settings_local.py  # If you have a local settings file
+
+# Node.js (if using npm/yarn for frontend assets)
+node_modules/
+npm-debug.log
+yarn.lock
+package-lock.json
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# MacOS system files
+.DS_Store
+
+# Coverage reports
+htmlcov/
+.coverage
+*.cover
+.coverage.*
+
+# Migrations (optional - if you don't want to track them)
+# ** Be careful, migrations should generally be tracked, unless for initial setup **
+migrations/
