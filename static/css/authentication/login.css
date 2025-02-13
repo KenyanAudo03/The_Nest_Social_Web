@@ -12,6 +12,7 @@ body {
     height: 100vh;
     background: #f4f4f4;
     padding: 20px;
+    overflow: hidden;
 }
 
 .container {
@@ -143,6 +144,15 @@ body {
     .container {
         flex-direction: column;
         text-align: center;
+
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .logo {
