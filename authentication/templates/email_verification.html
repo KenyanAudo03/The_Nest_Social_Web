@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email - The Nest</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      .wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+      .container {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .logo-container {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+      .logo {
+        width: 180px;
+        height: auto;
+        display: inline-block;
+      }
+      .content {
+        padding: 30px;
+        text-align: center;
+      }
+      h2 {
+        color: #333;
+        margin: 0 0 20px;
+        font-size: 24px;
+      }
+      p {
+        color: #555;
+        margin: 0 0 15px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .button {
+        display: inline-block;
+        background-color: #4a90e2;
+        color: white;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 25px 0;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.2s;
+      }
+      .button:hover {
+        background-color: #357abd;
+      }
+      .verification-code {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 14px;
+        margin: 20px 0;
+        word-break: break-all;
+        border: 1px solid #eee;
+      }
+      .expiry-notice {
+        color: #666;
+        font-style: italic;
+        margin: 25px 0;
+        font-size: 14px;
+      }
+      .footer {
+        text-align: center;
+        color: #666;
+        font-size: 12px;
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+      }
+      .footer p {
+        margin: 5px 0;
+        font-size: 12px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="logo-container">
+          <img
+            src="https://i.imgur.com/GqNbGxg.png"
+            alt="The Nest Logo"
+            class="logo"
+          />
+        </div>
+        <div class="content">
+          <h2>Welcome to The Nest!</h2>
+          <p>Hi {{ user.first_name }},</p>
+          <p>
+            Thank you for joining our platform! To start connecting with others
+            in The Nest, please verify your email address.
+          </p>
+          <a href="{{ verification_link }}" class="button"
+            >Verify Email Address</a
+          >
+          <p>Or copy and paste this link into your browser:</p>
+          <div class="verification-code">{{ verification_link }}</div>
+          <p class="expiry-notice">
+            ⏰ This verification link will expire in 1 hour for security
+            reasons.
+          </p>
+          <p>
+            If you didn't create an account on The Nest, you can safely ignore
+            this email.
+          </p>
+          <div class="footer">
+            <p>The Nest - Your Social Community</p>
+            <p>
+              This is an automated message, please do not reply to this email.
+            </p>
+            <p>&copy; 2025 The Nest. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
