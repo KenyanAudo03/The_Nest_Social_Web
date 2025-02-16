@@ -115,7 +115,8 @@
         color: #1976d2;
       }
 
-      .update-button {
+      .update-button,
+      .resend-button {
         display: none;
         background-color: #2196f3;
         color: white;
@@ -128,7 +129,8 @@
         margin-top: 12px;
       }
 
-      .update-button:hover {
+      .update-button:hover,
+      .resend-button:hover {
         background-color: #1976d2;
       }
 
@@ -175,6 +177,11 @@
 
       .shake {
         animation: shake 0.4s ease-in-out;
+      }
+
+      .resend-button {
+        display: block;
+        width: 100%;
       }
       .message_container {
         position: fixed;
@@ -324,6 +331,13 @@
         </div>
       </form>
 
+      <form action="{% url 'resend_email' email=email %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="resend-button">
+          Resend Verification Email
+        </button>
+      </form>
+
       <div class="button-group">
         <a href="https://mail.google.com/" target="_blank" class="btn">
           <i class="fa-brands fa-google"></i> Open Gmail
@@ -378,13 +392,6 @@
           }
 
           emailForm.submit();
-        });
-
-        document.addEventListener("keydown", function (event) {
-          if (event.key === "Escape" && !emailInput.readOnly) {
-            emailInput.value = originalEmail;
-            toggleEditMode(false);
-          }
         });
       });
 
