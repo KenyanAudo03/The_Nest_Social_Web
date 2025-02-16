@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-pb$ca(2cnd(2h&+gjz+0=%st(g9+zp=82m@aux7qz!uo+hr)a!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "192.168.248.250"]
 
 
 # Application definition
@@ -125,6 +125,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# User configuration
+AUTH_USER_MODEL = "profiles.UserProfile"
+
 
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -141,3 +144,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTHENTICATION_BACKENDS = [
+    "authentication.backends.EmailAuthBackend",  # Custom backend
+    "django.contrib.auth.backends.ModelBackend",  # Default Django backend
+]
