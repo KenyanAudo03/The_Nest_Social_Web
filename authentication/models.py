@@ -14,7 +14,7 @@ class EmailVerificationToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_expired(self):
-        return now() > self.created_at + timedelta(hours=3)  # Token expires in 24 hours
+        return now() > self.created_at + timedelta(hours=1)  
 
     def __str__(self):
         return f"Verification token for {self.user.email}"
@@ -26,7 +26,5 @@ class PasswordResetToken(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_valid(self):
-        """Token expires after 1 hour"""
-        return (
-            datetime.datetime.now(datetime.timezone.utc) - self.created_at
-        ).seconds < 3600
+        """Token expires after 15 minutes"""
+        return now() < self.created_at + timedelta(minutes=15)

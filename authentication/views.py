@@ -13,6 +13,11 @@ from django.http import HttpResponse
 from profiles.models import UserProfile
 from datetime import datetime
 from django.utils.safestring import mark_safe
+from django.shortcuts import get_object_or_404
+from django.views.decorators.cache import never_cache
+from django.contrib.auth import authenticate, login as auth_login
+from django.middleware.csrf import get_token
+
 
 # Create your views here.
 
@@ -64,14 +69,16 @@ def signup(request):
         last_name = request.POST.get("last_name", "").strip()
         email = request.POST.get("email", "").strip()
         password = request.POST.get("password", "")
-        
+
         # Handle date components
         day = request.POST.get("day", str(current_day))
         selected_month = int(request.POST.get("month", current_month))
         year = request.POST.get("year", str(current_year))
-        
+
         # Format date of birth
-        dob = f"{year}-{selected_month}-{day}" if all([day, selected_month, year]) else ""
+        dob = (
+            f"{year}-{selected_month}-{day}" if all([day, selected_month, year]) else ""
+        )
 
         # Prepare context for potential re-render
         context = {
@@ -89,7 +96,9 @@ def signup(request):
 
         # Check if email already exists
         if User.objects.filter(email=email).exists():
-            messages.error(request, mark_safe('Email already in use. <a href="/">Login here</a>.'))
+            messages.error(
+                request, mark_safe('Email already in use. <a href="/">Login here</a>.')
+            )
             return render(request, "signup.html", context)
 
         # Validate password
@@ -112,12 +121,14 @@ def signup(request):
 
         # Create verification token
         token = EmailVerificationToken.objects.create(
-            user=user, 
-            token=str(uuid.uuid4())
+            user=user, token=str(uuid.uuid4())
         )
-        
+
         # Send verification email
         send_verification_email(request, user, token.token)
+        messages.success(
+            request, "A verification email has been sent, please verify your account"
+        )
 
         return redirect("email_sent", email=email)
 
@@ -134,9 +145,8 @@ def signup(request):
         "months": months,
         "years": years,
     }
-    
-    return render(request, "signup.html", context)
 
+    return render(request, "signup.html", context)
 
 
 def send_verification_email(request, user, token):
@@ -186,6 +196,36 @@ def verify_email(request, token):
 
 
 def email_sent(request, email):
+    user = get_object_or_404(User, email=email)
+
+    if user.email_verified:
+        messages.error(request, "You cannot change your email after verification.")
+        return redirect("home")
+
+    if request.method == "POST":
+        new_email = request.POST.get("email", "").strip()
+        if User.objects.filter(email=new_email).exclude(id=user.id).exists():
+            messages.error(request, "This email is already in use.")
+            return render(request, "email_sent.html", {"email": email})
+
+        # Update user email
+        user.email = new_email
+        user.email_verified = False
+        user.save()
+
+        # Remove old verification tokens
+        EmailVerificationToken.objects.filter(user=user).delete()
+        new_token = EmailVerificationToken.objects.create(
+            user=user, token=str(uuid.uuid4())
+        )
+        send_verification_email(request, user, new_token.token)
+
+        messages.success(
+            request,
+            "Your email has been updated! A new verification email has been sent.",
+        )
+        return redirect("email_sent", email=new_email)
+
     return render(request, "email_sent.html", {"email": email})
 
 
@@ -212,5 +252,33 @@ def home(request):
     return render(request, "home.html")
 
 
+# Login
+@never_cache
 def user_login(request):
-    return render(request, "login.html")
+    if request.method == "POST":
+        email = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            if not user.email_verified:
+                messages.error(
+                    request,
+                    'Email not verified. <a href="/verify_your_email">Click here</a> to verify.',
+                )
+                return render(request, "login.html")
+
+            auth_login(request, user)
+            return redirect("home")
+        else:
+            messages.error(request, "Invalid email or password.")
+            return render(request, "login.html")
+
+    csrf_token = get_token(request)
+    response = render(request, "login.html", {"csrf_token": csrf_token})
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+
+    return response
