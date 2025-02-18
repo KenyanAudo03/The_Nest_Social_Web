@@ -17,6 +17,10 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.contrib.auth import authenticate, login as auth_login
 from django.middleware.csrf import get_token
+from django.core.mail import send_mail
+from django.utils.timezone import now
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import update_session_auth_hash
 
 
 # Create your views here.
@@ -265,7 +269,9 @@ def user_login(request):
             if not user.email_verified:
                 messages.error(
                     request,
-                    'Email not verified. <a href="/verify_your_email">Click here</a> to verify.',
+                    mark_safe(
+                        f'Email not verified. <a href="{reverse("resend_email", args=[email])}">Click here</a> to verify.'
+                    ),
                 )
                 return render(request, "login.html")
 
@@ -282,3 +288,91 @@ def user_login(request):
     response["Expires"] = "0"
 
     return response
+
+
+# Forgot Password
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email").strip()
+
+        try:
+            user = User.objects.get(email=email)
+            token = get_random_string(32)
+
+            # Save the token in the database
+            PasswordResetToken.objects.create(user=user, token=token)
+
+            # Create the reset URL
+            reset_link = request.build_absolute_uri(
+                reverse("reset_password", args=[token])
+            )
+
+            # Render email template
+            html_message = render_to_string(
+                "forgot-pass-email.html",
+                {
+                    "user": user,
+                    "reset_link": reset_link,
+                },
+            )
+            plain_message = strip_tags(html_message)
+
+            # Send email
+            send_mail(
+                subject="Password Reset Request",
+                message=plain_message,
+                from_email="noreply@example.com",
+                recipient_list=[user.email],
+                html_message=html_message,
+            )
+
+            messages.success(request, "A reset link has been sent to your email.")
+            return redirect("user_login")
+
+        except User.DoesNotExist:
+            messages.error(request, "No account found with this email.")
+            return redirect("forgot_password")
+
+    return render(request, "forgot_password.html")
+
+
+# Reset Password
+def reset_password(request, token):
+    # Check if the token exists
+    reset_token = PasswordResetToken.objects.filter(token=token).first()
+
+    if not reset_token:
+        messages.error(
+            request, "Invalid or expired token. Please request a new password reset."
+        )
+        return redirect("forgot_password")
+
+    # Check if token has expired (1-hour limit)
+    time_elapsed = (now() - reset_token.created_at).total_seconds()
+    if time_elapsed > 3600:
+        reset_token.delete()
+        messages.error(
+            request, "Token has expired. Please request a new password reset."
+        )
+        return redirect("forgot_password")
+
+    if request.method == "POST":
+        new_password = request.POST.get("password").strip()
+        confirm_password = request.POST.get("confirm_password").strip()
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect("reset_password", token=token)
+
+        # Update user password
+        reset_token.user.set_password(new_password)
+        reset_token.user.save()
+        update_session_auth_hash(request, reset_token.user)
+        reset_token.delete()
+
+        messages.success(
+            request, "Your password has been reset successfully. Please log in."
+        )
+        return redirect("user_login")
+
+    return render(request, "reset_password.html", {"token": token})
