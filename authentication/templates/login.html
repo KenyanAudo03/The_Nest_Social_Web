@@ -71,7 +71,9 @@
             </div>
           </div>
 
-          <a href="" class="forgot-password">Forgot Password?</a>
+          <a href="{% url 'forgot_password' %}" class="forgot-password"
+            >Forgot Password?</a
+          >
           <button type="submit" class="login-btn">Log In</button>
         </form>
 
@@ -93,7 +95,7 @@
           message.style.display = "none";
           message.style.transform = "translateY(-10px)";
         });
-      }, 5000);
+      }, 7000);
     });
   </script>
 

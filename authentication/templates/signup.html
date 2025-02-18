@@ -149,6 +149,9 @@
             });
             form.addEventListener("submit", function () {
                 loadingScreen.style.display = "flex";
+                setTimeout(() => {
+                  loadingScreen.style.display = "none";
+                }, 7000);
                 sessionStorage.setItem("hideLoader", "true");
             });
             if (sessionStorage.getItem("hideLoader")) {
@@ -168,7 +171,7 @@
                 message.style.display = "none";
                 message.style.transform = "translateY(-10px)";
               });
-            }, 5000);
+            }, 7000);
           });
         </script>
       </div>
