@@ -193,7 +193,7 @@ def verify_email(request, token):
         verification_token.delete()
 
         messages.success(request, "Email verified successfully!")
-        return redirect("home")
+        return redirect("posts:home")
 
     except EmailVerificationToken.DoesNotExist:
         return HttpResponse("Invalid or expired verification link.", status=400)
@@ -204,7 +204,7 @@ def email_sent(request, email):
 
     if user.email_verified:
         messages.error(request, "You cannot change your email after verification.")
-        return redirect("home")
+        return redirect("posts:home")
 
     if request.method == "POST":
         new_email = request.POST.get("email", "").strip()
@@ -237,7 +237,7 @@ def resend_email(request, email):
     try:
         user = User.objects.get(email=email)
         if user.email_verified:
-            return redirect("home")
+            return redirect("posts:home")
 
         # Generate new token
         token, created = EmailVerificationToken.objects.get_or_create(
@@ -252,10 +252,6 @@ def resend_email(request, email):
         return redirect("signup")
 
 
-def home(request):
-    return render(request, "home.html")
-
-
 # Login
 @never_cache
 def user_login(request):
@@ -268,15 +264,13 @@ def user_login(request):
         if user is not None:
             if not user.email_verified:
                 messages.error(
-                    request,
-                    mark_safe(
-                        f'Email not verified. <a href="{reverse("resend_email", args=[email])}">Click here</a> to verify.'
-                    ),
+                request,
+                mark_safe(f'Email not verified. <a href="{reverse("resend_email", args=[email])}">Click here</a> to verify.')
                 )
                 return render(request, "login.html")
 
             auth_login(request, user)
-            return redirect("home")
+            return redirect("posts:home")
         else:
             messages.error(request, "Invalid email or password.")
             return render(request, "login.html")

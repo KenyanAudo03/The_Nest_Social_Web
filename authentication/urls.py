@@ -9,5 +9,4 @@ urlpatterns = [
     path("resend-email/<str:email>/", views.resend_email, name="resend_email"),
      path("forgot-password/", views.forgot_password, name="forgot_password"),
     path("reset-password/<str:token>/", views.reset_password, name="reset_password"),
-    path("home/", views.home, name="home"),
 ]
