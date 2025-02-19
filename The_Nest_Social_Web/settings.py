@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-pb$ca(2cnd(2h&+gjz+0=%st(g9+zp=82m@aux7qz!uo+hr)a!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "192.168.248.250"]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "192.168.248.21"]
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "authentication",
     "profiles",
+    "posts",
 ]
 
 MIDDLEWARE = [
@@ -118,7 +119,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Media files (User-uploaded content)
@@ -137,7 +138,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 
 
 # Default primary key field type
