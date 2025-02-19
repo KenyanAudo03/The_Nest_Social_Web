@@ -1,345 +1,292 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Nest</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="64x64"
-      href="{% static 'images/favicon/favicon.svg' %}"
-    />
-    <style>
-      :root {
-        --bg-color: #ffffff;
-        --navbar-bg: #ffffff;
-        --text-color: #333;
-        --search-bg: #f0f2f5;
-        --border-color: #ccc;
-        --icon-color: #333;
-        --placeholder-color: #888;
-        --blue-color: #1877f2;
-      }
+{% extends 'base.html' %} {% block content %}
+<style>
+  .container {
+    display: flex;
+    width: 100%;
+    padding-top: 45px;
+    height: calc(100vh - 40px);
+    position: fixed;
+  }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg-color: #18191a;
-          --navbar-bg: #242526;
-          --text-color: #ffffff;
-          --search-bg: #3a3b3c;
-          --border-color: #555;
-          --icon-color: #ffffff;
-          --placeholder-color: #bbb;
-          --blue-color: #1877f2;
-        }
-      }
+  .left_navigation,
+  .right_navigation,
+  .posts_suggested_profiles {
+    padding: 15px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 8px;
+    margin: 0 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background: var(--bg-color);
-        color: var(--text-color);
-      }
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.2s;
 
-      .navbar {
-        width: 100%;
-        background: var(--navbar-bg);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
+    /* Webkit scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
 
-      .logo-search {
-        display: flex;
-        align-items: center;
-      }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-      .logo img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 1px solid var(--border-color);
-        display: block;
-        margin-right: 10px;
-      }
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+      border-radius: 3px;
+      transition: background-color 0.2s;
+    }
 
-      .search {
-        position: relative;
-        display: flex;
-        align-items: center;
-        background-color: var(--search-bg);
-        padding: 5px 10px;
-        border-radius: 20px;
-        padding-right: 10px;
-      }
+    /* Show scrollbar when scrolling */
+    &:hover,
+    &:focus,
+    &.scrolling {
+      scrollbar-color: #888 transparent;
 
-      .search i {
-        font-size: 20px;
-        color: var(--icon-color);
-        margin-right: 2px;
+      &::-webkit-scrollbar-thumb {
+        background-color: #888;
       }
+    }
+  }
 
-      .search input {
-        border: none;
-        flex-grow: 1;
-        padding: 10px;
-        border-radius: 20px;
-        color: var(--text-color);
-        outline: none;
-        background-color: transparent;
-      }
+  .left_navigation {
+    width: 25%;
+  }
 
-      .search input::placeholder {
-        color: var(--placeholder-color);
-      }
+  .posts_suggested_profiles {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-      .navigations ul {
-        list-style: none;
-        display: flex;
-        padding: 0;
-        margin: 0;
-      }
+  .right_navigation {
+    width: 25%;
+  }
+  a {
+    text-decoration: none;
+    color: #1877f2;
+    padding: 8px 0;
+  }
 
-      .navigations ul li {
-        margin: 0 15px;
-        position: relative;
-      }
+  h3 {
+    margin-bottom: 10px;
+  }
+  .section {
+    background: var(--card-light);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+  .menu-item i {
+    font-size: 22px;
+    margin-right: 12px;
+  }
+  .feeds-items i {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-      .navigations ul li a {
-        color: var(--icon-color);
-        font-size: 24px;
-        text-decoration: none;
-        border-radius: 50%;
-        background-color: var(--search-bg);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        transition: background-color 0.3s ease;
-      }
+  /* Different background colors for each icon */
+  .feeds-items:nth-child(1) i {
+    background-color: #ff6b6b;
+  }
 
-      .navigations ul li a:hover {
-        background-color: var(--border-color);
-      }
+  .feeds-items:nth-child(2) i {
+    background-color: #6b9bff;
+  }
 
-      .user-navigations {
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-        gap: 10px;
-        padding-right: 22px;
-      }
+  .feeds-items:nth-child(3) i {
+    background-color: #ffcc00;
+  }
 
-      .user-navigations a {
-        color: var(--icon-color);
-        font-size: 22px;
-        margin-left: 15px;
-        text-decoration: none;
-        border-radius: 50%;
-      }
+  .feeds-items:nth-child(4) i {
+    background-color: #4caf50;
+  }
 
-      .user-navigations a i {
-        font-size: 24px;
-      }
+  .feeds-items:nth-child(5) i {
+    background-color: #9c27b0;
+  }
+  .more-item i,
+  .account-item i {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-      .small_screen_base_view {
-        display: none;
-      }
+  .more-item:nth-child(1) i {
+    background-color: #ff5722;
+  }
 
-      @media (max-width: 768px) {
-        .large_screen_base_view {
-          display: none;
-        }
-        .small_screen_base_view {
-          display: block;
-        }
-      }
+  .more-item:nth-child(2) i {
+    background-color: #03a9f4;
+  }
 
-      .small_screen_base_view {
-        background: var(--bg-color);
-        padding-bottom: 60px;
-      }
+  .more-item:nth-child(3) i {
+    background-color: #8bc34a;
+  }
 
-      .small_screen_header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        top: 0;
-        left: 0;
-        color: var(--text-color);
-        font-weight: bold;
-        border-bottom: 1px solid #cccccc3f;
-        font-size: 14px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
+  .more-item:nth-child(4) i {
+    background-color: #ff9800;
+  }
 
-      .profile-circle {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        background: var(--bg-color);
-        color: var(--text-color);
-        transition: transform 0.2s ease-in-out;
-        border: 2px solid var(--border-color);
-      }
+  .more-item:nth-child(5) i {
+    background-color: #673ab7;
+  }
+  .account-item:nth-child(1) i {
+    background-color: #1e88e5;
+  }
 
-      .profile-circle:hover {
-        transform: scale(1.1);
-      }
+  .account-item:nth-child(2) i {
+    background-color: #43a047;
+  }
 
-      .profile-circle img {
-        width: 35px;
-        height: 35px;
-        object-fit: cover;
-        border-radius: 50%;
-      }
-      .site_name h1 {
-        font-family: "Anton", serif;
-        font-weight: 400;
-        font-style: normal;
-      }
+  .account-item:nth-child(3) i {
+    background-color: #fbc02d;
+  }
 
-      .bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--navbar-bg);
-        display: flex;
-        justify-content: space-around;
-        padding: 5px;
-        border-top: 1px solid var(--border-color);
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-      }
+  .account-item:nth-child(4) i {
+    background-color: #424242;
+  }
 
-      .bottom-nav a {
-        text-align: center;
-        flex-grow: 1;
-        padding: 8px;
-        border-radius: 10px;
-        transition: all 0.2s ease-in-out;
-        text-decoration: none;
-      }
+  /* Hover effect */
+  .menu-item:hover i {
+    filter: brightness(1.2);
+  }
+  .add-post-btn {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1877f2;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+  .add-post-btn i {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+  }
 
-      .bottom-nav a i {
-        font-size: 24px;
-        color: var(--icon-color);
-        transition: color 0.3s;
-      }
+  /* Hover Effect */
+  .add-post-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+  }
+  @media (max-width: 768px) {
+    .left_navigation,
+    .right_navigation {
+      display: none;
+    }
+    .posts_suggested_profiles {
+      width: 100%;
+    }
+    .add-post-btn {
+      bottom: 60px;
+    }
+    .container {
+      padding-top: 0;
+    }
+  }
+</style>
 
-      .bottom-nav a:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .bottom-nav a:active {
-        transform: scale(0.9);
-      }
-
-      .bottom-nav a i.active {
-        color: var(--blue-color);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="large_screen_base_view">
-      <div class="navbar">
-        <div class="logo-search">
-          <div class="logo">
-            <a href="{% url 'posts:home' %}"
-              ><img
-                src="{% static 'images/favicon/favicon.svg' %}"
-                alt="The Nest Logo"
-              />
-            </a>
-          </div>
-          <div class="search">
-            <i class="bx bx-search"></i>
-            <input type="text" placeholder="Search Users/Posts" />
-          </div>
-        </div>
-        <div class="navigations">
-          <ul>
-            <li>
-              <a href="#" title="Home"><i class="bx bx-home"></i></a>
-            </li>
-            <li>
-              <a href="#" title="Videos"><i class="bx bx-video"></i></a>
-            </li>
-            <li>
-              <a href="#" title="Groups"><i class="bx bx-group"></i></a>
-            </li>
-            <li>
-              <a href="#" title="Marketplace"
-                ><i class="bx bx-store-alt"></i
-              ></a>
-            </li>
-            <li>
-              <a href="#" title="Users"><i class="bx bx-user"></i></a>
-            </li>
-          </ul>
-        </div>
-        <div class="user-navigations">
-          <a href="#" title="Notification"><i class="bx bx-bell"></i></a>
-          <a href="#" title="Messages"><i class="bx bx-message"></i></a>
-          <a href="#" title="Settings"><i class="bx bx-cog"></i></a>
-          <a href="#" title="Profile"><i class="bx bxs-user"></i></a>
-        </div>
+<div class="container">
+  <div class="left_navigation">
+    <div class="new_feeds">
+      <h3>New Feeds</h3>
+      <div class="section">
+        <a href="#" class="menu-item feeds-items"
+          ><i class="bx bx-news"></i> Feeds</a
+        >
+        <a href="#" class="menu-item feeds-items"
+          ><i class="bx bx-group"></i> Popular Groups</a
+        >
+        <a href="#" class="menu-item feeds-items"
+          ><i class="bx bx-trending-up"></i> Trending Posts</a
+        >
+        <a href="#" class="menu-item feeds-items"
+          ><i class="bx bx-bookmark"></i> Saved Posts</a
+        >
+        <a href="#" class="menu-item feeds-items"
+          ><i class="bx bx-user-plus"></i> Suggested Account</a
+        >
       </div>
     </div>
-    <div class="small_screen_base_view">
-      <div class="small_screen_header">
-        <div style="display: flex; gap: 12px; align-items: center">
-          <div class="profile-circle ac-circle">
-            <a href="{% url 'posts:home' %}">
-              <img
-                src="{% static 'images/favicon/favicon.svg' %}"
-                alt="The Nest Logo"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="site_name">
-          <h1 style="margin: 0">The Nest</h1>
-        </div>
-        <a href="#" style="text-decoration: none; color: inherit;">
-          <div class="profile-circle vo-circle">
-            {{ user.first_name|first }}{{ user.last_name|first }}
-          </div>
-        </a>
-      </div>
-
-      <div class="bottom-nav">
-        <a href="#" class="nav-item"><i class="bx bx-home"></i></a>
-        <a href="#" class="nav-item"><i class="bx bx-search-alt-2"></i></a>
-        <a href="#" class="nav-item"><i class="bx bx-plus"></i></a>
-        <a href="#" class="nav-item"><i class="bx bx-bell"></i></a>
-        <a href="#" class="nav-item"><i class="bx bx-message"></i></a>
+    <div class="more_pages">
+      <h3>More Pages</h3>
+      <div class="section">
+        <a href="#" class="menu-item more-item"
+          ><i class="bx bx-calendar-event"></i> Events</a
+        >
+        <a href="#" class="menu-item more-item"
+          ><i class="bx bx-store"></i> Marketplace</a
+        >
+        <a href="#" class="menu-item more-item"
+          ><i class="bx bx-folder"></i> Resources</a
+        >
+        <a href="#" class="menu-item more-item"
+          ><i class="bx bx-search-alt-2"></i> Lost and Found</a
+        >
+        <a href="#" class="menu-item more-item"
+          ><i class="bx bx-home-alt"></i> Housing & Roommates</a
+        >
       </div>
     </div>
-  </body>
-</html>
+    <div class="account_settings">
+      <h3>Account Settings</h3>
+      <div class="section">
+        <a href="#" class="menu-item account-item"
+          ><i class="bx bx-user-circle"></i> View Profile</a
+        >
+        <a href="#" class="menu-item account-item"
+          ><i class="bx bx-edit"></i> Edit Profile</a
+        >
+        <a href="#" class="menu-item account-item"
+          ><i class="bx bx-help-circle"></i> Help Center</a
+        >
+        <a href="#" class="menu-item account-item"
+          ><i class="bx bx-moon"></i> Dark Mode</a
+        >
+      </div>
+    </div>
+  </div>
+  <div class="posts_suggested_profiles">
+    <h2>News Feed</h2>
+
+    <div class="add-post-btn" >
+      <a href="#">
+        <i class="bx bx-plus"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="right_navigation">
+    <h3>Contacts</h3>
+    <p>Chat and friend suggestions here...</p>
+  </div>
+</div>
+
+{% endblock %}
