@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}The Nest{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="{% static 'images/favicon/favicon.svg' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/base.css'%}" />
+    <style>
+      @media screen and (max-width: 768px) {
+        .content {
+          padding-top: 60px;
+        }
+
+        .small_screen_header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 97vw;
+          z-index: 1000;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .small_screen_base_view {
+          padding-top: 60px;
+        }
+      }
+      .active i {
+        color: #007bff; /* Change color */
+        font-weight: bold;
+      }
+      .navigations ul .active a {
+        background-color: #007bff27;
+      }
+      .logo-search {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="large_screen_base_view">
+      <div class="navbar">
+        <div class="logo-search">
+          <div class="logo">
+            <a href="{% url 'posts:home' %}"
+              ><img
+                src="{% static 'images/favicon/favicon.svg' %}"
+                alt="The Nest Logo"
+              />
+            </a>
+          </div>
+          <div class="search">
+            <i class="bx bx-search"></i>
+            <input type="text" placeholder="Search Users/Posts" />
+          </div>
+        </div>
+        <div class="navigations">
+          <ul>
+            <li
+              class="{% if '/posts/' in request.path or request.path == '/the_nest/' %}active{% endif %}"
+            >
+              <a href="{% url 'posts:home' %}" title="Home"
+                ><i class="bx bx-home"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" title="Videos"><i class="bx bx-video"></i></a>
+            </li>
+            <li>
+              <a href="#" title="Groups"><i class="bx bx-group"></i></a>
+            </li>
+            <li>
+              <a href="#" title="Marketplace"
+                ><i class="bx bx-store-alt"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" title="Users"><i class="bx bx-user"></i></a>
+            </li>
+          </ul>
+        </div>
+        <div class="user-navigations">
+          <a href="#" title="Notification"><i class="bx bx-bell"></i></a>
+          <a href="#" title="Messages"><i class="bx bx-message"></i></a>
+          <a href="#" title="Settings"><i class="bx bx-cog"></i></a>
+          <a href="#" title="Profile"><i class="bx bxs-user"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      {% block content %}
+      <!-- Child templates will inject their content here -->
+      {% endblock %}
+    </div>
+    <div class="small_screen_base_view">
+      <div class="small_screen_header">
+        <div style="display: flex; gap: 12px; align-items: center">
+          <div class="profile-circle ac-circle">
+            <a href="{% url 'posts:home' %}">
+              <img
+                src="{% static 'images/favicon/favicon.svg' %}"
+                alt="The Nest Logo"
+              />
+            </a>
+          </div>
+        </div>
+        <div class="site_name">
+          <h1 style="margin: 0">The Nest</h1>
+        </div>
+        <a href="#" style="text-decoration: none; color: inherit">
+          <div class="profile-circle vo-circle">
+            {{ user.first_name|first }}{{ user.last_name|first }}
+          </div>
+        </a>
+      </div>
+
+      <div class="bottom-nav">
+        <a href="{% url 'posts:home' %}" class="nav-item" title="Home"
+          ><i class="bx bx-home"></i
+        ></a>
+        <a href="#" class="nav-item" title="Search"
+          ><i class="bx bx-search-alt-2"></i
+        ></a>
+        <a href="#" class="nav-item" title="Marketplace"
+          ><i class="bx bx-store-alt"></i
+        ></a>
+        <a href="#" class="nav-item" title="Events"
+          ><i class="bx bx-calendar-event"></i
+        ></a>
+        <a href="#" class="nav-item" title="Notification"
+          ><i class="bx bx-bell"></i
+        ></a>
+        <a href="#" class="nav-item" title="Messages"
+          ><i class="bx bx-message"></i
+        ></a>
+      </div>
+    </div>
+  </body>
+</html>
