@@ -1,216 +1,17 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% block content %} {% load static %} 
+{% load time_filters %}
+<link rel="stylesheet" href="{% static 'css/posts/home.css' %}" />
 <style>
-  .container {
-    display: flex;
+  .post-media img,
+.post-media video {
     width: 100%;
-    padding-top: 45px;
-    height: calc(100vh - 40px);
-    position: fixed;
-  }
-
-  .left_navigation,
-  .right_navigation,
-  .posts_suggested_profiles {
-    padding: 15px;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    aspect-ratio: 16/15; 
+    object-fit: cover;
+    max-height: 500px;
     border-radius: 8px;
-    margin: 0 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background: #2a2a2a;
+}
 
-    /* Firefox scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-    transition: scrollbar-color 0.2s;
-
-    /* Webkit scrollbar */
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: transparent;
-      border-radius: 3px;
-      transition: background-color 0.2s;
-    }
-
-    /* Show scrollbar when scrolling */
-    &:hover,
-    &:focus,
-    &.scrolling {
-      scrollbar-color: #888 transparent;
-
-      &::-webkit-scrollbar-thumb {
-        background-color: #888;
-      }
-    }
-  }
-
-  .left_navigation {
-    width: 25%;
-  }
-
-  .posts_suggested_profiles {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .right_navigation {
-    width: 25%;
-  }
-  a {
-    text-decoration: none;
-    color: #1877f2;
-    padding: 8px 0;
-  }
-
-  h3 {
-    margin-bottom: 10px;
-  }
-  .section {
-    background: var(--card-light);
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 15px;
-  }
-  .menu-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    text-decoration: none;
-    color: var(--text-light);
-    font-weight: 600;
-    border-radius: 8px;
-    transition: 0.3s;
-  }
-  .menu-item i {
-    font-size: 22px;
-    margin-right: 12px;
-  }
-  .feeds-items i {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Different background colors for each icon */
-  .feeds-items:nth-child(1) i {
-    background-color: #ff6b6b;
-  }
-
-  .feeds-items:nth-child(2) i {
-    background-color: #6b9bff;
-  }
-
-  .feeds-items:nth-child(3) i {
-    background-color: #ffcc00;
-  }
-
-  .feeds-items:nth-child(4) i {
-    background-color: #4caf50;
-  }
-
-  .feeds-items:nth-child(5) i {
-    background-color: #9c27b0;
-  }
-  .more-item i,
-  .account-item i {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .more-item:nth-child(1) i {
-    background-color: #ff5722;
-  }
-
-  .more-item:nth-child(2) i {
-    background-color: #03a9f4;
-  }
-
-  .more-item:nth-child(3) i {
-    background-color: #8bc34a;
-  }
-
-  .more-item:nth-child(4) i {
-    background-color: #ff9800;
-  }
-
-  .more-item:nth-child(5) i {
-    background-color: #673ab7;
-  }
-  .account-item:nth-child(1) i {
-    background-color: #1e88e5;
-  }
-
-  .account-item:nth-child(2) i {
-    background-color: #43a047;
-  }
-
-  .account-item:nth-child(3) i {
-    background-color: #fbc02d;
-  }
-
-  .account-item:nth-child(4) i {
-    background-color: #424242;
-  }
-
-  /* Hover effect */
-  .menu-item:hover i {
-    filter: brightness(1.2);
-  }
-  .add-post-btn {
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #1877f2;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    cursor: pointer;
-  }
-  .add-post-btn i {
-    font-size: 24px;
-    font-weight: 600;
-    color: #ffffff;
-  }
-
-  /* Hover Effect */
-  .add-post-btn:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
-  }
-  @media (max-width: 768px) {
-    .left_navigation,
-    .right_navigation {
-      display: none;
-    }
-    .posts_suggested_profiles {
-      width: 100%;
-    }
-    .add-post-btn {
-      bottom: 60px;
-    }
-    .container {
-      padding-top: 0;
-    }
-  }
 </style>
 
 <div class="container">
@@ -274,10 +75,87 @@
     </div>
   </div>
   <div class="posts_suggested_profiles">
-    <h2>News Feed</h2>
+    <div class="posts_container">
+      {% for post in posts %}
+      <div class="post">
+        <!-- Post Author -->
+        <div class="post-header">
+          <div class="profile-container">
+            {% if post.user.profile_picture %}
+            <img
+              src="{{ post.user.profile_picture.url }}"
+              alt="Profile Picture"
+              class="profile-pic"
+            />
+            {% else %}
+            <i class="bx bx-user default-icon"></i>
+            {% endif %}
+          </div>
 
-    <div class="add-post-btn" >
-      <a href="#">
+          <div class="user-info">
+            <div class="full-name">
+              {{ post.user.first_name }} {{ post.user.last_name }}
+            </div>
+            <div class="meta-info">
+              <span class="username">@{{ post.user.username }}</span> •
+              <span class="time">{{ post.created_at|time_ago }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        {% if post.content %}
+        <p>{{ post.content }}</p>
+        {% endif %}
+
+        <!-- Post Media -->
+        {% if post.media.all %}
+        <div class="post-media media-{{ post.media.count }}">
+          {% for media in post.media.all %} {% with media.file.url|lower as file_url %}
+          {% if file_url|slice:"-4:" in ".jpg,.png,.gif,.jpeg" or file_url|slice:"-5:" == ".webp" %}
+          <img src="{{ media.file.url }}" alt="Post media" />
+          {% elif file_url|slice:"-4:" in ".mp4,.mov,.avi,.flv,.wmv" or file_url|slice:"-5:" in ".webm,.mkv" %}
+          <video controls>
+            <source src="{{ media.file.url }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          {% else %}
+          <p>Unsupported file type</p>
+          {% endif %} {% endwith %} {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="post-stats">
+          <div class="views-count">
+            <i class="bx bx-poll bx-rotate-270"></i>
+            <span>1.2K views</span>
+          </div>
+        </div>
+        <div class="post-actions">
+          <button class="action-button">
+            <i class="bx bx-heart"></i>
+            <span class="action-count">142</span>
+          </button>
+          <button class="action-button">
+            <i class="bx bx-comment"></i>
+            <span class="action-count">24</span>
+          </button>
+          <button class="action-button">
+            <i class="bx bx-repost"></i>
+            <span class="action-count">12</span>
+          </button>
+          <button class="action-button">
+            <i class="bx bx-share"></i>
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <p>No posts available.</p>
+      {% endfor %}
+    </div>
+
+    <div class="add-post-btn">
+      <a href="{% url 'posts:create_post' %}">
         <i class="bx bx-plus"></i>
       </a>
     </div>
