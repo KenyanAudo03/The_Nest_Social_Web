@@ -1,7 +1,8 @@
 {% extends 'base.html' %} {% block content %} {% load static %} 
 {% load time_filters %}
 <link rel="stylesheet" href="{% static 'css/posts/home.css' %}" />
-
+<style>
+</style>
 <div class="container">
   <div class="left_navigation">
     <div class="new_feeds">
@@ -143,7 +144,7 @@
     </div>
 
     <div class="add-post-btn">
-      <a href="{% url 'posts:create_post' %}">
+      <a href="{% url 'create_post' %}">
         <i class="bx bx-plus"></i>
       </a>
     </div>
