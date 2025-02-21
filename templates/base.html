@@ -59,7 +59,7 @@
       <div class="navbar">
         <div class="logo-search">
           <div class="logo">
-            <a href="{% url 'posts:home' %}"
+            <a href="{% url 'home' %}"
               ><img
                 src="{% static 'images/favicon/favicon.svg' %}"
                 alt="The Nest Logo"
@@ -76,7 +76,7 @@
             <li
               class="{% if '/posts/' in request.path or request.path == '/the_nest/' %}active{% endif %}"
             >
-              <a href="{% url 'posts:home' %}" title="Home"
+              <a href="{% url 'home' %}" title="Home"
                 ><i class="bx bx-home"></i
               ></a>
             </li>
@@ -114,7 +114,7 @@
       <div class="small_screen_header">
         <div style="display: flex; gap: 12px; align-items: center">
           <div class="profile-circle ac-circle">
-            <a href="{% url 'posts:home' %}">
+            <a href="{% url 'home' %}">
               <img
                 src="{% static 'images/favicon/favicon.svg' %}"
                 alt="The Nest Logo"
@@ -133,7 +133,7 @@
       </div>
 
       <div class="bottom-nav">
-        <a href="{% url 'posts:home' %}" class="nav-item" title="Home"
+        <a href="{% url 'home' %}" class="nav-item" title="Home"
           ><i class="bx bx-home"></i
         ></a>
         <a href="#" class="nav-item" title="Search"
