@@ -424,6 +424,59 @@ h3 {
     object-fit: cover;
 }
 
+.plyr-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.plyr-container .plyr {
+    height: 100%;
+}
+
+/* Hide all controls except play and duration */
+.plyr--video .plyr__controls {
+    background: none !important;
+    padding: 0 !important;
+}
+
+.plyr--video .plyr__controls button {
+    display: none !important;
+}
+
+.plyr--video .plyr__controls .plyr__control--overlaid {
+    display: flex !important;
+}
+
+.plyr--video .plyr__controls .plyr__time {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 6px;
+    border-radius: 4px;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+/* Hide progress bar */
+.plyr--video .plyr__progress__container {
+    display: none !important;
+}
+
+.plyr--video .plyr__control--overlaid {
+    background: rgba(0, 150, 136, 0.8) !important;
+}
+
+/* Hover Effect */
+.plyr--video .plyr__control--overlaid:hover {
+    background: rgba(0, 150, 136, 1) !important;
+}
+
+/* Play Icon Color */
+.plyr--video .plyr__control--overlaid svg {
+    color: #003366 !important;
+    /* Dark Blue */
+}
+
 /* Container for each media item */
 .post-media>div {
     width: 100%;
