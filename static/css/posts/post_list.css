@@ -1,0 +1,49 @@
+.like-button:active {
+    transform: scale(0.95);
+}
+
+.like-button .bxs-heart {
+    color: #ff4545;
+    animation: likeAnimation 0.3s ease forwards;
+}
+
+.like-button:hover i {
+    color: #ff4545;
+    transform: scale(1.1);
+}
+
+.bxs-heart+.like-count {
+    color: #ff4545;
+}
+
+@keyframes likeAnimation {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.like-count.animate {
+    animation: countBounce 0.3s ease forwards;
+}
+
+@keyframes countBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
