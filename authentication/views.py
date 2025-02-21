@@ -14,9 +14,6 @@ from profiles.models import UserProfile
 from datetime import datetime
 from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404
-from django.views.decorators.cache import never_cache
-from django.contrib.auth import authenticate, login as auth_login
-from django.middleware.csrf import get_token
 from django.core.mail import send_mail
 from django.utils.timezone import now
 from django.contrib.sites.shortcuts import get_current_site
@@ -252,36 +249,7 @@ def resend_email(request, email):
         return redirect("signup")
 
 
-# Login
-@never_cache
-def user_login(request):
-    if request.method == "POST":
-        email = request.POST.get("username", "").strip()
-        password = request.POST.get("password", "").strip()
 
-        user = authenticate(request, email=email, password=password)
-
-        if user is not None:
-            if not user.email_verified:
-                messages.error(
-                request,
-                mark_safe(f'Email not verified. <a href="{reverse("resend_email", args=[email])}">Click here</a> to verify.')
-                )
-                return render(request, "login.html")
-
-            auth_login(request, user)
-            return redirect("posts:home")
-        else:
-            messages.error(request, "Invalid email or password.")
-            return render(request, "login.html")
-
-    csrf_token = get_token(request)
-    response = render(request, "login.html", {"csrf_token": csrf_token})
-    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response["Pragma"] = "no-cache"
-    response["Expires"] = "0"
-
-    return response
 
 
 # Forgot Password

@@ -71,7 +71,7 @@
             </div>
           </div>
 
-          <a href="{% url 'forgot_password' %}" class="forgot-password"
+          <a href="{% url 'authentication:forgot_password' %}" class="forgot-password"
             >Forgot Password?</a
           >
           <button type="submit" class="login-btn">Log In</button>
@@ -79,7 +79,7 @@
 
         <p class="create-account">
           Don't have an account?
-          <a href="{% url 'signup' %}?signup=true">Create one</a>
+          <a href="{% url 'authentication:signup' %}?signup=true">Create one</a>
         </p>
       </div>
     </div>
