@@ -73,9 +73,7 @@
         </div>
         <div class="navigations">
           <ul>
-            <li
-              class="{% if '/posts/' in request.path or request.path == '/the_nest/' %}active{% endif %}"
-            >
+            <li class="{% if '/' in request.path %}active{% endif %}">
               <a href="{% url 'home' %}" title="Home"
                 ><i class="bx bx-home"></i
               ></a>
@@ -154,4 +152,24 @@
       </div>
     </div>
   </body>
+
+  {% if not request.user.is_authenticated %}
+  <script>
+    let firstVisit = localStorage.getItem("guest_first_visit");
+
+    if (!firstVisit) {
+      firstVisit = Date.now();
+      localStorage.setItem("guest_first_visit", firstVisit);
+    }
+    let remainingTime = 60000 - (Date.now() - firstVisit);
+
+    if (remainingTime > 0) {
+      setTimeout(function () {
+        window.location.href = "{% url 'user_login' %}";
+      }, remainingTime);
+    } else {
+      window.location.href = "{% url 'user_login' %}";
+    }
+  </script>
+  {% endif %}
 </html>
