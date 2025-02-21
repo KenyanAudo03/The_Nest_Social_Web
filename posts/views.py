@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Post, Media
+from .models import Post, Media, Like
 from .forms import PostForm, MediaUploadForm
 from django.forms import modelformset_factory
 from django.contrib.auth import authenticate, login as auth_login
@@ -11,7 +11,10 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.utils.timezone import now
 from datetime import timedelta
+from django.http import JsonResponse
 from django.core.cache import cache
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Count, Exists, OuterRef
 
 # Create your views here.
 
@@ -55,21 +58,22 @@ def home(request):
 
     # If the user is authenticated, allow access
     if request.user.is_authenticated:
-        posts = cache.get("cached_posts")
-        if not posts:
-            posts = (
-                Post.objects.select_related("user")
-                .prefetch_related("media")
-                .order_by("-created_at")
+        posts = (
+            Post.objects.select_related("user")
+            .prefetch_related("media")
+            .annotate(
+                like_count=Count("likes"), 
+                is_liked=Exists(
+                    Like.objects.filter(user=request.user, post=OuterRef("pk"))
+                ), 
             )
-            cache.set("cached_posts", posts, 300)
-        return render(request, "home.html", {"posts": posts})
+            .order_by("-created_at")
+        )
 
-    # Check if the guest has a session tracking their first visit
+        return render(request, "home.html", {"posts": posts})
     first_visit = request.session.get("guest_first_visit")
 
     if not first_visit:
-        # Store the first visit timestamp in the session
         request.session["guest_first_visit"] = now().isoformat()
     else:
         first_visit_time = now().fromisoformat(first_visit)
@@ -78,11 +82,14 @@ def home(request):
                 request, "Your guest access has expired. Please log in to continue."
             )
             return redirect("user_login")
+
     posts = (
         Post.objects.select_related("user")
         .prefetch_related("media")
+        .annotate(like_count=Count("likes"))
         .order_by("-created_at")
     )
+
     return render(request, "home.html", {"posts": posts})
 
 
@@ -113,3 +120,24 @@ def create_post(request):
         "create_post.html",
         {"post_form": post_form, "media_form": media_form},
     )
+
+
+@login_required
+def toggle_like(request, post_id):
+    if request.method == "POST":
+        post = get_object_or_404(Post, id=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if created:
+            is_liked = True
+        else:
+            is_liked = False
+            like.delete()
+
+        # Refresh the like count after modification
+        post.refresh_from_db()
+        like_count = post.likes.count()
+
+        return JsonResponse({"is_liked": is_liked, "like_count": like_count})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)

@@ -16,14 +16,13 @@ class Post(models.Model):
         related_name="reposted_posts",
     )
     repost_count = models.PositiveIntegerField(default=0)
-    like_count = models.PositiveIntegerField(default=0)
     view_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"Post by {self.user.username} - {self.created_at}"
+    
 
     def increment_repost_count(self):
-        """Increment repost count for the original post"""
         if self.reposted_from:
             self.reposted_from.repost_count += 1
             self.reposted_from.save()
@@ -45,7 +44,7 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user", "post")  # Ensure a user can like a post only once
+        unique_together = ("user", "post")
 
     def __str__(self):
         return f"{self.user.username} liked Post {self.post.id}"
