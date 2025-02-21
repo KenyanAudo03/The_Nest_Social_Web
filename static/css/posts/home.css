@@ -14,7 +14,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 8px;
-    margin: 0 8px;
+    margin: 0;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     /* Firefox scrollbar */
@@ -287,7 +287,7 @@ h3 {
     flex-direction: column;
     gap: 20px;
     padding: 16px;
-    max-width: 600px;
+    max-width: 500px;
     margin: 0 auto;
     padding-bottom: 20px;
 }
@@ -367,17 +367,21 @@ h3 {
 /* Media Grid */
 .post-media {
     display: grid;
-    gap: 8px;
-    margin-top: 16px;
+    gap: 2px;
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
 }
 
-/* Grid Layout Variations */
+/* Grid layouts */
 .post-media.media-1 {
     grid-template-columns: 1fr;
 }
 
 .post-media.media-2 {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
 }
 
 .post-media.media-3 {
@@ -386,31 +390,72 @@ h3 {
 
 .post-media.media-3>*:first-child {
     grid-column: 1 / -1;
+    aspect-ratio: 16/15;
 }
 
 .post-media.media-4 {
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
 }
 
 .post-media.media-5 {
     grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
 }
 
 .post-media.media-5>*:first-child {
     grid-column: 1 / -1;
+    aspect-ratio: 16/15;
 }
 
-/* Media Items */
+/* Media styling */
 .post-media img,
 .post-media video {
     width: 100%;
-    aspect-ratio: 16/15; 
-    object-fit: cover;
-    max-height: 500px;
-    border-radius: 8px;
-    background: #2a2a2a;
+    height: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 0px;
+    background: #000;
+
 }
 
+.post-media img {
+    object-fit: cover;
+}
+
+/* Container for each media item */
+.post-media>div {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Portrait adjustments */
+.post-media.portrait img,
+.post-media.portrait video {
+    max-height: 90vh;
+}
+
+/* Specific override for single image */
+.post-media.media-1 img,
+.post-media.media-1 video {
+    height: auto;
+    /* Allow natural height for single images */
+    aspect-ratio: unset;
+}
+
+.post-media {
+    display: grid;
+    gap: 0;
+    margin-top: 16px;
+}
+
+/* For portrait images/videos */
+.post-media.portrait img,
+.post-media.portrait video {
+    max-height: 90vh;
+}
 
 /* Post Actions */
 .post-stats {
