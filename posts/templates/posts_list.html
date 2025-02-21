@@ -1,5 +1,9 @@
-{% load time_filters %} {% for post in posts %}
-<div class="post">
+{% load time_filters %} {% load static %}
+<link rel="stylesheet" href="{% static 'css/posts/post_list.css' %}" />
+
+{% for post in posts %}
+
+<div class="post" data-post-id="{{ post.id }}">
   <!-- Post Author -->
   <div class="post-header">
     <div class="profile-container">
@@ -52,14 +56,16 @@
   <div class="post-stats">
     <div class="views-count">
       <i class="bx bx-poll bx-rotate-270"></i>
-      <span>1.2K views</span>
+      <span>{{ post.view_count }}</span>
     </div>
   </div>
   <div class="post-actions">
-    <button class="action-button">
-      <i class="bx bx-heart"></i>
-      <span class="action-count">142</span>
+    <button class="action-button like-button" data-post-id="{{ post.id }}">
+      <i class="bx {% if post.is_liked %}bxs-heart{% else %}bx-heart{% endif %}"></i>
+      <span class="action-count like-count">{{ post.like_count }}</span>
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     </button>
+    
     <button class="action-button">
       <i class="bx bx-comment"></i>
       <span class="action-count">24</span>
@@ -76,3 +82,5 @@
 {% empty %}
 <p>No posts available.</p>
 {% endfor %}
+
+<script src="{% static 'js/posts/posts_liking.js' %}"></script>
