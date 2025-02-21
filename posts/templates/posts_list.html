@@ -1,0 +1,78 @@
+{% load time_filters %} {% for post in posts %}
+<div class="post">
+  <!-- Post Author -->
+  <div class="post-header">
+    <div class="profile-container">
+      {% if post.user.profile_picture %}
+      <img
+        src="{{ post.user.profile_picture.url }}"
+        alt="Profile Picture"
+        class="profile-pic"
+      />
+      {% else %}
+      <i class="bx bx-user default-icon"></i>
+      {% endif %}
+    </div>
+
+    <div class="user-info">
+      <div class="full-name">
+        {{ post.user.first_name }} {{ post.user.last_name }}
+      </div>
+      <div class="meta-info">
+        <span class="username">@{{ post.user.username }}</span> •
+        <span class="time">{{ post.created_at|time_ago }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Content -->
+  {% if post.content %}
+  <p>{{ post.content }}</p>
+  {% endif %}
+
+  <!-- Post Media -->
+  {% if post.media.all %}
+  <div class="post-media media-{{ post.media.count }}">
+    {% for media in post.media.all %} {% with media.file.url|lower as file_url %}
+    {% if file_url|slice:"-4:" in ".jpg,.png,.gif,.jpeg" or file_url|slice:"-5:" == ".webp" %}
+    <img src="{{ media.file.url }}" alt="Post media" loading="lazy" />
+    {% elif file_url|slice:"-4:" in ".mp4,.mov,.avi,.flv,.wmv" or file_url|slice:"-5:" in ".webm,.mkv" %}
+    <div class="plyr-container">
+      <video class="plyr-video" playsinline>
+        <source src="{{ media.file.url }}" type="video/mp4" />
+      </video>
+    </div>
+    {% else %}
+    <p>Unsupported file type</p>
+    {% endif %} {% endwith %} {% endfor %}
+  </div>
+
+  {% endif %}
+
+  <div class="post-stats">
+    <div class="views-count">
+      <i class="bx bx-poll bx-rotate-270"></i>
+      <span>1.2K views</span>
+    </div>
+  </div>
+  <div class="post-actions">
+    <button class="action-button">
+      <i class="bx bx-heart"></i>
+      <span class="action-count">142</span>
+    </button>
+    <button class="action-button">
+      <i class="bx bx-comment"></i>
+      <span class="action-count">24</span>
+    </button>
+    <button class="action-button">
+      <i class="bx bx-repost"></i>
+      <span class="action-count">12</span>
+    </button>
+    <button class="action-button">
+      <i class="bx bx-share"></i>
+    </button>
+  </div>
+</div>
+{% empty %}
+<p>No posts available.</p>
+{% endfor %}
