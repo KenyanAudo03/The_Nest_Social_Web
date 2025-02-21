@@ -190,7 +190,7 @@ def verify_email(request, token):
         verification_token.delete()
 
         messages.success(request, "Email verified successfully!")
-        return redirect("posts:home")
+        return redirect("home")
 
     except EmailVerificationToken.DoesNotExist:
         return HttpResponse("Invalid or expired verification link.", status=400)
@@ -201,7 +201,7 @@ def email_sent(request, email):
 
     if user.email_verified:
         messages.error(request, "You cannot change your email after verification.")
-        return redirect("posts:home")
+        return redirect("home")
 
     if request.method == "POST":
         new_email = request.POST.get("email", "").strip()
@@ -234,7 +234,7 @@ def resend_email(request, email):
     try:
         user = User.objects.get(email=email)
         if user.email_verified:
-            return redirect("posts:home")
+            return redirect("home")
 
         # Generate new token
         token, created = EmailVerificationToken.objects.get_or_create(
@@ -247,9 +247,6 @@ def resend_email(request, email):
 
     except User.DoesNotExist:
         return redirect("signup")
-
-
-
 
 
 # Forgot Password

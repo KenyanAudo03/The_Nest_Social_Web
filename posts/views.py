@@ -39,7 +39,7 @@ def user_login(request):
                 return render(request, "login.html")
 
             auth_login(request, user)
-            return redirect("posts:home")
+            return redirect("home")
         else:
             messages.error(request, "Invalid email or password.")
             return render(request, "login.html")
